@@ -1,0 +1,66 @@
+.DataGrid{
+    
+}
+
+.DataGrid table{
+    width: 100%;
+    border:none;
+    border-spacing: 0;
+}
+
+.DataGrid table thead{
+    color: #888;
+    font-weight: bold;    
+}
+
+.DataGrid table thead th{
+    padding: 10px 5px;
+    border-bottom: 1px solid #CCC;
+}
+
+.DataGrid table tbody{
+    
+}
+
+.DataGrid table tbody tr{
+    
+}
+
+.DataGrid table tbody tr td{
+    padding: 10px 10px;
+    border-bottom: 1px solid #DDD;
+}
+
+.DataGrid table tbody tr:last-child td{    
+    border-bottom: none;
+}
+
+.DataGrid thead .sorter{
+    float: right;
+    cursor: pointer;
+    opacity: 0;
+}
+
+.DataGrid thead .sorter.sorter-active{
+    opacity: 1;
+}
+
+.DataGrid thead th:hover .sorter{
+    opacity: 0.5;
+}
+
+.DataGrid thead .sorter .sort-arrows{
+
+}
+
+.DataGrid thead .sorter .sort-arrows:hover{
+    
+}
+
+.DataGrid thead .sorter .sortIndex{
+    color: #888;
+    font-size: 80%;
+    font-style: normal;
+    padding-left: 3px;
+}
+

@@ -1,0 +1,23 @@
+.App {  
+  height: 100%;
+}
+
+.App header{
+  width: 300px;
+  margin: 0 auto;
+  padding: 20px 0;
+}
+
+.App .grid-section{
+  margin: 20px;
+  padding: 20px;
+  background-color: #FFF;
+}
+
+.App td .active{
+  color: green;
+}
+
+.App td .inactive{
+  color: red;
+}
