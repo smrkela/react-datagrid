@@ -10,10 +10,13 @@ class ColumnSelectorPopup extends React.Component {
             <Dropdown className="ColumnSelectorPopup">
                 <DropdownTrigger className="ColumnSelectorPopup">Columns</DropdownTrigger>
                 <DropdownContent className="ColumnSelectorPopup">
-                    <label>Select columns:</label>
+                    <div className="header">Select columns:</div>
                     <ul>
                         {this.props.columns.map(item => (
-                            <li key={item.id} onClick={() => this.props.onToggleColumn(item)}>{item.title}</li>)
+                            <li key={item.id} onClick={() => this.props.onToggleColumn(item)}>
+                                {item.title}
+                                <input type="checkbox" checked={item.visible}/>
+                            </li>)
                         )}
                     </ul>
                 </DropdownContent>

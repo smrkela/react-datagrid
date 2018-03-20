@@ -2,7 +2,7 @@ import comparator from "../utils/comparator";
 
 class DataGridColumn {
 
-    constructor(id, title, field, sort, valueFunction, classNameFunction, styleFunction, rendererFunction) {
+    constructor(id, title, field, sort, valueFunction, classNameFunction, styleFunction, rendererFunction, size) {
 
         this.id = id;
         this.title = title;

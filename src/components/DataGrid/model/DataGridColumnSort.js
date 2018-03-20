@@ -50,15 +50,17 @@ class DataGridColumnSort {
 
     compare(column, item1, item2) {
 
-        const value1 = column.getCellValue(item1);
-        const value2 = column.getCellValue(item2);
-
         let result = 0;
 
-        if (this.comparator)
-            result = this.comparator(value1, value2);
-        else
+        if (this.comparator) {
+            result = this.comparator(item1, item2, column);
+        }
+        else {
+            const value1 = column.getCellValue(item1);
+            const value2 = column.getCellValue(item2);
+
             result = comparator(value1, value2, column);
+        }
 
         return result;
     }

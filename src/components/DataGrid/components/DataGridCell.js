@@ -1,4 +1,5 @@
 import React from "react";
+import OverflowTooltip from "../../OverflowTooltip/OverflowTooltip";
 
 const DataGridCell = ({ data, column }) => {
 
@@ -8,16 +9,22 @@ const DataGridCell = ({ data, column }) => {
 
     if (customRenderer) {
         content = customRenderer;
-        
+
     } else {
 
-        content = column.getCellValue(data);
+        const cellValue = column.getCellValue(data);
+
+        content = (<OverflowTooltip title={cellValue + ""}>
+            <span>{cellValue}</span>
+        </OverflowTooltip>);
 
         const styles = column.styleFunction ? column.styleFunction(data) : null;
         const classNames = column.classNameFunction ? column.classNameFunction(data) : null;
 
         if (styles || classNames)
-            content = <span className={classNames} style={styles}>{content}</span>;
+            content = <span className={classNames} style={styles}>
+                {content}
+            </span>;
     }
 
     return (

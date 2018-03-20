@@ -82,7 +82,7 @@ export default class DataGrid extends React.Component {
         dataProviderCopy = this.sort(dataProviderCopy);
 
         const visibleColumns = this.props.columns.filter(item => item.visible);
-        let bodyContent = dataProviderCopy.map(item => <DataGridRow key={item.id} data={item} columns={visibleColumns} />);
+        let bodyContent = dataProviderCopy.map(item => <DataGridRow key={item[this.props.dataKey]} data={item} columns={visibleColumns} />);
 
         if (dataProviderCopy.length === 0 && this.props.emptyMessage) {
             bodyContent = <tr><td colSpan={visibleColumns.length}>{this.props.emptyMessage}</td></tr>;

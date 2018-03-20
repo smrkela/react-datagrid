@@ -6,6 +6,13 @@ import DataGridColumnSort from './components/DataGrid/model/DataGridColumnSort';
 import getData from "./demoData";
 import Dropdown, { DropdownTrigger, DropdownContent } from './components/Dropdown/Dropdown';
 
+const balanceComparator = (item1, item2) => {
+  const balance1 = item1.balance ? Number(item1.balance.substr(1).split(",").join("")) : 0;
+  const balance2 = item2.balance ? Number(item2.balance.substr(1).split(",").join("")) : 0;
+
+  return balance1 - balance2;
+}
+
 const columns = [
   new DataGridColumn("picture", "Photo", null, null, null, null, null, (data, column) => {
     return <img src={data.picture} />;
@@ -17,6 +24,7 @@ const columns = [
   new DataGridColumn("phone", "Phone", "phone", new DataGridColumnSort()),
   new DataGridColumn("company", "Company", "company"),
   new DataGridColumn("email", "Email", "email", new DataGridColumnSort()),
+  new DataGridColumn("balance", "Balance", "balance", new DataGridColumnSort(false, true, 1, balanceComparator)),
   new DataGridColumn("isActive", "Active", "isActive", new DataGridColumnSort(), (data) => {
     return data.isActive ? "Yes" : "No"
   }, (data) => {
@@ -87,7 +95,7 @@ class App extends Component {
         </header>
 
         <div className="grid-section">
-          <DataGrid columns={columns} dataProvider={this.state.dataProvider} emptyMessage="No data yet."></DataGrid>
+          <DataGrid columns={columns} dataProvider={this.state.dataProvider} dataKey="_id" emptyMessage="No data yet."></DataGrid>
         </div>
       </div>
     );
