@@ -4,182 +4,162 @@
  * Constraints are: minWidth, maxWidth, percentWidth, preferredWidth
  * The calculated value is set in width property
  * @param {array} columns 
- * @param {number} tableWidth 
+ * @param {number} displayWidth 
  */
-const updateColumnWidths = (columns, tableWidth) => {
+const updateColumnWidths = (columns, displayWidth) => {
 
-    // first we check if we can even fit all the columns by their min width
-    const totalMinWidth = columns
-        .filter(item => item.size.minWidth > 0)
-        .map(item => item.size.minWidth)
-        .reduce((sum, item) => sum + item, 0);
+    let n;
+    let i;
 
-    // reduction factor says how much we need to reduce the widths of columns
-    // even below it's min width, e.g. value of 2 means the min width will 
-    // actually be halved
-    const reductionFactor = 1;
+    let visibleColumns = columns.filter(item => item.visible);
 
-    if (totalMinWidth > tableWidth)
-        reductionFactor = tableWidth / totalMinWidth;
+    let lastColumn;
+    let newSize;
+    let visibleColumn;
+    let size;
 
+    // count how many resizable columns and how wide they are
+    n = visibleColumns.length;
 
+    let { preferredWidth, minWidth, numResizable } = calculateTotals(visibleColumns);
 
+    let ratio;
+    let newTotal = displayWidth;
 
+    // if there is more space than the preferred width, we distribute the remaining space to 
+    // columns that have percent width
+    let excessWidth = 0;
+
+    if (preferredWidth < displayWidth)
+        excessWidth = displayWidth - preferredWidth;
+
+    // if we have missing width, resizable columns need to be shortened
+    let missingWidth = 0;
+
+    if (preferredWidth > displayWidth)
+        missingWidth = preferredWidth - displayWidth;
+
+    if (displayWidth > minWidth && numResizable) {
+        // we have flexible columns and room to honor minwidths and non-resizable
+
+        n = visibleColumns.length;
+        newSize = 0;
+
+        // if we have excess width, we can increase the size of all resizable columns
+        // for the nonresizable columns, we respect their width or calculate percent width
+        if (excessWidth >= 0) {
+
+            ratio = (excessWidth + displayWidth) / displayWidth;
+
+            for (i = 0; i < n; i++) {
+
+                visibleColumn = visibleColumns[i];
+                size = visibleColumn.size;
+
+                if (size.resizable) {
+
+                    lastColumn = visibleColumn;
+                    size.width = Math.floor(size.getPreferredOrMinWidth() * ratio);
+
+                } else {
+                    if (size.percentWidth) {
+                        size.width = Math.floor(excessWidth * size.percentWidth / 100);
+                    } else {
+                        size.width = size.getPreferredOrMinWidth();
+                    }
+                }
+
+                newSize += size.width;
+            }
+
+        } else if (missingWidth > 0) {
+
+            // if we have missing width we need to reduce the size of all resizable columns
+            // and we don't have space for displaying the percent width columns that have no
+            // min width
+            ratio = (displayWidth - missingWidth) / displayWidth;
+
+            for (i = 0; i < n; i++) {
+
+                visibleColumn = visibleColumns[i];
+                size = visibleColumn.size;
+
+                if (size.resizable) {
+
+                    lastColumn = visibleColumn;
+                    size.width = Math.max(size.minWidth, Math.floor(size.preferredWidth * ratio));
+
+                } else {
+
+                    if (size.percentWidth) {
+                        size.width = size.minWidth;
+                    } else {
+                        size.width = preferredWidth;
+                    }
+                }
+
+                newSize += size.width;
+            }
+        }
+
+        if (newSize > displayWidth)
+            lastColumn.size.width -= newSize - displayWidth;
+        else if (newSize < displayWidth)
+            lastColumn.size.width += displayWidth - newSize;
+    }
+    else // can't honor minwidth and non-resizables so just scale everybody
+    {
+
+        ratio = preferredWidth / displayWidth;
+        n = visibleColumns.length;
+
+        for (i = 0; i < n; i++) {
+
+            lastColumn = visibleColumns[i];
+            ratio = lastColumn.size.getPreferredOrMinWidth() / preferredWidth;
+            newSize = Math.floor(displayWidth * ratio);
+            lastColumn.size.width = newSize;
+            newTotal -= newSize;
+        }
+
+        if (newTotal && lastColumn) {
+            lastColumn.size.width = lastColumn.size.getPreferredOrMinWidth() + newTotal;
+        }
+    }
 
 
 }
 
-function calculateColumnSizes(columns) {
-    let delta;
-    let n;
-    let i;
-    let totalWidth = 0;
-    let col;
-    let cw;
+function calculateTotals(visibleColumns) {
 
-    let visibleColumns = columns.filter(item => item.visible);
+    // sum of min width of columns
+    let minWidth = 0;
 
-    var lastColumn;
-    var newSize;
+    // sum of all preferred widths
+    let preferredWidth = 0;
 
+    // num of resizable columns
     let numResizable = 0;
-    let fixedWidth = 0;
 
-    // count how many resizable columns and how wide they are
-    n = visibleColumns.length;
+    let visibleColumn;
+    let i;
+    let n = visibleColumns.length;
+
     for (i = 0; i < n; i++) {
 
-        if (visibleColumns[i].size.resizable && !visibleColumns[i].newlyVisible) {
-            
-            if (!isNaN(visibleColumns[i].size.explicitWidth)) {
-                // trace("    explicit width " + visibleColumns[i].width);
-                fixedWidth += visibleColumns[i].size.width;
-            }
-            else {
-                // trace("    implicitly resizable");
-                numResizable++;
-                fixedWidth += visibleColumns[i].size.minWidth;
-                // trace("    minWidth " + visibleColumns[i].minWidth);
-            }
-        }
-        else {
-            // trace("    not resizable");
-            fixedWidth += visibleColumns[i].size.width;
-        }
+        visibleColumn = visibleColumns[i]
 
-        totalWidth += visibleColumns[i].size.width;
-    }
-    n = visibleLockedColumns.length;
-    for (i = 0; i < n; i++) {
-        // trace("column " + i + " width = " + visibleLockedColumns[i].width);
-        if (visibleLockedColumns[i].resizable && !visibleLockedColumns[i].newlyVisible) {
-            // trace("    resizable");
-            if (!isNaN(visibleLockedColumns[i].explicitWidth)) {
-                // trace("    explicit width " + visibleLockedColumns[i].width);
-                fixedWidth += visibleLockedColumns[i].width;
-            }
-            else {
-                // trace("    implicitly resizable");
-                numResizable++;
-                fixedWidth += visibleLockedColumns[i].minWidth;
-                // trace("    minWidth " + visibleLockedColumns[i].minWidth);
-            }
-        }
-        else {
-            // trace("    not resizable");
-            fixedWidth += visibleLockedColumns[i].width;
-        }
+        // preferred width is the sum of preferred or min widths
+        preferredWidth += visibleColumn.size.getPreferredOrMinWidth();
 
-        totalWidth += visibleLockedColumns[i].width;
-    }
-    // trace("totalWidth = " + totalWidth);
-    // trace("displayWidth = " + displayWidth);
+        if (visibleColumn.size.minWidth)
+            minWidth += visibleColumn.size.minWidth;
 
-    var ratio;
-    var newTotal = displayWidth;
-    var minWidth;
-    if (displayWidth > fixedWidth && numResizable) {
-        // we have flexible columns and room to honor minwidths and non-resizable
-        // trace("have enough room");
-
-        // divide and distribute the excess among the resizable
-        n = visibleLockedColumns.length;
-        for (i = 0; i < n; i++) {
-            if (visibleLockedColumns[i].resizable && !visibleLockedColumns[i].newlyVisible && isNaN(visibleLockedColumns[i].explicitWidth)) {
-                lastColumn = visibleLockedColumns[i];
-                if (totalWidth > displayWidth)
-                    ratio = (lastColumn.width - lastColumn.minWidth) / (totalWidth - fixedWidth);
-                else
-                    ratio = lastColumn.width / totalWidth;
-                newSize = Math.floor(lastColumn.width - (totalWidth - displayWidth) * ratio);
-                minWidth = visibleLockedColumns[i].minWidth;
-                visibleLockedColumns[i].setWidth(newSize > minWidth ? newSize : minWidth);
-                // trace("column " + i + " set to " + visibleLockedColumns[i].width);
-            }
-            newTotal -= visibleLockedColumns[i].width;
-            visibleLockedColumns[i].newlyVisible = false;
-        }
-        n = visibleColumns.length;
-        for (i = 0; i < n; i++) {
-            if (visibleColumns[i].resizable && !visibleColumns[i].newlyVisible && isNaN(visibleColumns[i].explicitWidth)) {
-                lastColumn = visibleColumns[i];
-                if (totalWidth > displayWidth)
-                    ratio = (lastColumn.width - lastColumn.minWidth) / (totalWidth - fixedWidth);
-                else
-                    ratio = lastColumn.width / totalWidth;
-                newSize = Math.floor(lastColumn.width - (totalWidth - displayWidth) * ratio);
-                minWidth = visibleColumns[i].minWidth;
-                visibleColumns[i].setWidth(newSize > minWidth ? newSize : minWidth);
-                // trace("column " + i + " set to " + visibleColumns[i].width);
-            }
-            newTotal -= visibleColumns[i].width;
-            visibleColumns[i].newlyVisible = false;
-        }
-        if (newTotal && lastColumn) {
-            // trace("excess = " + newTotal);
-            lastColumn.setWidth(lastColumn.width + newTotal);
-        }
-    }
-    else // can't honor minwidth and non-resizables so just scale everybody
-    {
-        // trace("too small or too big");
-        n = visibleLockedColumns.length;
-        for (i = 0; i < n; i++) {
-            lastColumn = visibleLockedColumns[i];
-            ratio = lastColumn.width / totalWidth;
-            //totalWidth -= visibleLockedColumns[i].width;
-            newSize = Math.floor(displayWidth * ratio);
-            lastColumn.setWidth(newSize);
-            lastColumn.explicitWidth = NaN;
-            // trace("column " + i + " set to " + visibleLockedColumns[i].width);
-            newTotal -= newSize;
-        }
-        n = visibleColumns.length;
-        for (i = 0; i < n; i++) {
-            lastColumn = visibleColumns[i];
-            ratio = lastColumn.width / totalWidth;
-            //totalWidth -= visibleColumns[i].width;
-            newSize = Math.floor(displayWidth * ratio);
-            lastColumn.setWidth(newSize);
-            lastColumn.explicitWidth = NaN;
-            // trace("column " + i + " set to " + visibleColumns[i].width);
-            newTotal -= newSize;
-        }
-        if (newTotal && lastColumn) {
-            // trace("excess = " + newTotal);
-            lastColumn.setWidth(lastColumn.width + newTotal);
-        }
+        if (visibleColumn.size.resizable)
+            numResizable++;
     }
 
-
-    lockedColumnWidth = 0;
-    if (visibleLockedColumns.length) {
-        n = visibleLockedColumns.length;
-        for (i = 0; i < n; i++) {
-            col = visibleLockedColumns[i];
-            lockedColumnWidth += col.width;
-        }
-    }
+    return { preferredWidth, minWidth, numResizable };
 }
 
 export default updateColumnWidths;

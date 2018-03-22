@@ -4,6 +4,7 @@ import "./DataGrid.css";
 import DataGridHeaderCell from "./components/DataGridHeaderCell";
 import DataGridRow from "./components/DataGridRow";
 import ColumnSelectorPopup from "./components/ColumnSelectorPopup/ColumnSelectorPopup";
+import updateColumnWidths from "./utils/columnWidthCalculator";
 
 export default class DataGrid extends React.Component {
 
@@ -34,7 +35,7 @@ export default class DataGrid extends React.Component {
         if (!column.locked)
             column.visible = !column.visible;
 
-        this.setState({updateToggle: !this.state.updateToggle});0
+        this.setState({ updateToggle: !this.state.updateToggle }); 0
     }
 
     sort(dataProviderCopy) {
@@ -78,6 +79,9 @@ export default class DataGrid extends React.Component {
 
     render() {
 
+        if (this.table)
+            updateColumnWidths(this.props.columns, this.table.offsetWidth);
+
         let dataProviderCopy = this.props.dataProvider.slice();
         dataProviderCopy = this.sort(dataProviderCopy);
 
@@ -93,7 +97,7 @@ export default class DataGrid extends React.Component {
                 <div className="settings">
                     <ColumnSelectorPopup columns={this.props.columns} onToggleColumn={this.toggleColumnClicked} />
                 </div>
-                <table>
+                <table ref={comp => this.table = comp}>
                     <thead>
                         <tr>
                             {visibleColumns.map(item => <DataGridHeaderCell key={item.id} owner={this} column={item} />)}

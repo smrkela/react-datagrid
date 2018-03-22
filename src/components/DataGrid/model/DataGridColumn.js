@@ -1,4 +1,5 @@
 import comparator from "../utils/comparator";
+import DataGridColumnSize from "./DataGridColumnSize";
 
 class DataGridColumn {
 
@@ -33,6 +34,10 @@ class DataGridColumn {
          * Is this column visible.
          */
         this.visible = true;
+        /**
+         * Size descriptor for the column
+         */
+        this.size = size || new DataGridColumnSize();
     }
 
     getCellValue(data) {
