@@ -9,59 +9,77 @@
     table-layout: fixed;
 }
 
-.DataGrid table thead{
+.DataGrid .row { 
+    width: 100%; 
+    display: table; 
+    table-layout: fixed; 
+}
+
+.DataGrid .col { 
+    display: table-cell; 
+    box-sizing: border-box;
+}
+
+.DataGrid .table .header{
     color: #888;
     font-weight: bold;    
 }
 
-.DataGrid table thead th{
+.DataGrid .table .header .col{
     padding: 10px 5px;
     border-bottom: 1px solid #CCC;
 }
 
-.DataGrid table tbody{
-    
-}
-
-.DataGrid table tbody tr{
-    
-}
-
-.DataGrid table tbody tr td{
+.DataGrid .table .body .row .col{
     padding: 10px 10px;
     border-bottom: 1px solid #DDD;
 }
 
-.DataGrid table tbody tr:last-child td{    
+.DataGrid .table .body .row:last-child .col{    
     border-bottom: none;
 }
 
-.DataGrid thead .sorter{
+.DataGrid .header .sorter{
     float: right;
     cursor: pointer;
     opacity: 0;
 }
 
-.DataGrid thead .sorter.sorter-active{
+.DataGrid .header .sorter.sorter-active{
     opacity: 1;
 }
 
-.DataGrid thead th:hover .sorter{
+.DataGrid .header .col:hover .sorter{
     opacity: 0.5;
 }
 
-.DataGrid thead .sorter .sort-arrows{
+.DataGrid .header .sorter .sort-arrows{
 
 }
 
-.DataGrid thead .sorter .sort-arrows:hover{
+.DataGrid .header .sorter .sort-arrows:hover{
     
 }
 
-.DataGrid thead .sorter .sortIndex{
+.DataGrid .header .sorter .sortIndex{
     color: #888;
     font-size: 80%;
     font-style: normal;
     padding-left: 3px;
 }
 
+.DataGrid .col .dataTypeString{
+    text-align: left;
+}
+
+.DataGrid .col .dataTypeNumber{
+    text-align: right;
+}
+
+.DataGrid .col .dataTypeBoolean{
+    text-align: center;
+}
+
+.DataGrid .col .dataTypeDate{
+    text-align: center;
+}

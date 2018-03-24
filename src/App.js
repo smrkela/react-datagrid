@@ -6,6 +6,7 @@ import DataGridColumnSort from './components/DataGrid/model/DataGridColumnSort';
 import getData from "./demoData";
 import Dropdown, { DropdownTrigger, DropdownContent } from './components/Dropdown/Dropdown';
 import DataGridColumnSize from './components/DataGrid/model/DataGridColumnSize';
+import DataGridColumnStyle from './components/DataGrid/model/DataGridColumnStyle';
 
 const balanceComparator = (item1, item2) => {
   const balance1 = item1.balance ? Number(item1.balance.substr(1).split(",").join("")) : 0;
@@ -15,45 +16,45 @@ const balanceComparator = (item1, item2) => {
 }
 
 const columns = [
-  new DataGridColumn("picture", "Photo", null, null, null, null, null, (data, column) => {
+  new DataGridColumn("picture").setTitle("Photo").setRendererFunction((data, column) => {
     return <img src={data.picture} />;
-  }, new DataGridColumnSize(300, 0, 0, false)),
-  new DataGridColumn("name", "Name", null, new DataGridColumnSort(), (data) => {
+  }).setSizeObject(new DataGridColumnSize(100, 0, 0, false)),
+  new DataGridColumn("name").setSortObject(new DataGridColumnSort()).setValueFunction(data => {
     return data.name.first + " - " + data.name.last;
-  }),
-  // new DataGridColumn("address", "Address", "address", new DataGridColumnSort(true)),
-  // new DataGridColumn("phone", "Phone", "phone", new DataGridColumnSort()),
-  // new DataGridColumn("company", "Company", "company"),
-  // new DataGridColumn("email", "Email", "email", new DataGridColumnSort()),
-  // new DataGridColumn("balance", "Balance", "balance", new DataGridColumnSort(false, true, 1, balanceComparator)),
-  // new DataGridColumn("isActive", "Active", "isActive", new DataGridColumnSort(), (data) => {
-  //   return data.isActive ? "Yes" : "No"
-  // }, (data) => {
-  //   return data.isActive ? "active" : "inactive";
-  // }),
-  // new DataGridColumn("age", "Age", "age", new DataGridColumnSort(), null, null, data => {
+  }).setSizeObject(new DataGridColumnSize(0, 20)),
+  new DataGridColumn("address").setSortObject(new DataGridColumnSort(true)),
+  new DataGridColumn("phone").setSortObject(new DataGridColumnSort()),
+  new DataGridColumn("company"),
+  new DataGridColumn("email").setSortObject(new DataGridColumnSort()),
+  new DataGridColumn("balance").setSortObject(new DataGridColumnSort(false, true, 1, balanceComparator)).setDataType("number"),
+  new DataGridColumn("isActive").setTitle("Active").setSortObject(new DataGridColumnSort()).setValueFunction(data => {
+    return data.isActive ? "Yes" : "No"
+  }).setStyleObject(new DataGridColumnStyle(null, null, null, data => {
+    return data.isActive ? "active" : "inactive";
+  })),
+  new DataGridColumn("age").setSortObject(new DataGridColumnSort()).setStyleObject(new DataGridColumnStyle(null, null, data => {
 
-  //   let styles;
+    let styles;
 
-  //   if (data.age > 35) {
-  //     styles = {
-  //       width: "100px",
-  //       backgroundColor: "green",
-  //       color: "#FFF",
-  //       padding: "2px 3px"
-  //     }
-  //   } else
-  //     if (data.age > 30) {
-  //       styles = {
-  //         width: "120px",
-  //         backgroundColor: "blue",
-  //         color: "#FFF",
-  //         padding: "2px 3px"
-  //       }
-  //     }
+    if (data.age > 35) {
+      styles = {
+        width: "100px",
+        backgroundColor: "green",
+        color: "#FFF",
+        padding: "2px 3px"
+      }
+    } else
+      if (data.age > 30) {
+        styles = {
+          width: "120px",
+          backgroundColor: "blue",
+          color: "#FFF",
+          padding: "2px 3px"
+        }
+      }
 
-  //   return styles;
-  // })
+    return styles;
+  }))
 ]
 
 const dataProvider = [

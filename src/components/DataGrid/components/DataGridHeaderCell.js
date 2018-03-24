@@ -3,11 +3,13 @@ import DataGridHeaderSorter from "./DataGridHeaderSorter";
 
 const DataGridHeaderCell = ({ column, owner }) => {
 
+    const style = { width: column.getWidthString() };
+
     return (
-        <th width={`${column.size.width}px`} onClick={(event) => owner.sortClicked(column, event)}>
+        <div className="col" style={style} onClick={(event) => owner.sortClicked(column, event)}>
             <span>{column.title}</span>
-            <DataGridHeaderSorter column={column} owner={owner} />            
-        </th>
+            <DataGridHeaderSorter column={column} owner={owner} />
+        </div>
     );
 }
 

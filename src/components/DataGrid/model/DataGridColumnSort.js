@@ -6,7 +6,7 @@ class DataGridColumnSort {
         this.sorted = sorted;
         this.sortAscending = sortAscending;
         this.sortIndex = sortIndex;
-        this.comparator = comparator;
+        this.comparator = comparator;        
     }
 
     updateSort(column, columns, mouseEvent) {

@@ -1,31 +1,22 @@
 export default class DataGridColumnSize {
 
-    constructor(preferredWidth = NaN, percentWidth = NaN, minWidth = 0, resizable = true) {
+    constructor(width = NaN, percentWidth = NaN, minWidth = 0) {
 
         // min width cannot be less than zero
         if (minWidth < 0)
             minWidth = 0;
 
-        // we make sure preferred width is not smaller than min width
-        if (preferredWidth && preferredWidth < minWidth)
-            preferredWidth = minWidth;
+        // we make sure width is not smaller than min width
+        if (width && width < minWidth)
+            width = minWidth;
 
-        // if column has both preferred width and percent width, percent width has precedence
-        if (preferredWidth && preferredWidth > 0 && percentWidth && percentWidth > 0)
-            preferredWidth = NaN;
+        // if column has both width and percent width, percent width has precedence
+        if (width && width > 0 && percentWidth && percentWidth > 0)
+            width = NaN;
 
-        // if column size is percent based, it's resizable
-        if (percentWidth && percentWidth > 0)
-            resizable = true;
-
-        this.preferredWidth = preferredWidth;
+        this.width = width;
         this.percentWidth = percentWidth;
         this.minWidth = minWidth;
-        this.resizable = resizable;
-        this.width = 0;
     }
 
-    getPreferredOrMinWidth() {
-        return this.preferredWidth || this.minWidth;
-    }
 }

@@ -4,7 +4,6 @@ import "./DataGrid.css";
 import DataGridHeaderCell from "./components/DataGridHeaderCell";
 import DataGridRow from "./components/DataGridRow";
 import ColumnSelectorPopup from "./components/ColumnSelectorPopup/ColumnSelectorPopup";
-import updateColumnWidths from "./utils/columnWidthCalculator";
 
 export default class DataGrid extends React.Component {
 
@@ -52,8 +51,8 @@ export default class DataGrid extends React.Component {
 
     getSortColumns() {
         return this.props.columns
-            .filter(column => column.sort && column.sort.sorted)
-            .sort((a, b) => a.sort.sortIndex - b.sort.sortIndex);
+            .filter(column => column.sortObject && column.sortObject.sorted)
+            .sort((a, b) => a.sortObject.sortIndex - b.sortObject.sortIndex);
     }
 
     compareItems(item1, item2, sortColumns) {
@@ -66,7 +65,7 @@ export default class DataGrid extends React.Component {
 
             compareResult = column.sortCompare(item1, item2);
 
-            if (!column.sort.sortAscending)
+            if (column.sortObject && !column.sortObject.sortAscending)
                 compareResult *= -1;
 
             if (!compareResult && sortColumns.length > 1) {
@@ -79,9 +78,6 @@ export default class DataGrid extends React.Component {
 
     render() {
 
-        if (this.table)
-            updateColumnWidths(this.props.columns, this.table.offsetWidth);
-
         let dataProviderCopy = this.props.dataProvider.slice();
         dataProviderCopy = this.sort(dataProviderCopy);
 
@@ -89,7 +85,7 @@ export default class DataGrid extends React.Component {
         let bodyContent = dataProviderCopy.map(item => <DataGridRow key={item[this.props.dataKey]} data={item} columns={visibleColumns} />);
 
         if (dataProviderCopy.length === 0 && this.props.emptyMessage) {
-            bodyContent = <tr><td colSpan={visibleColumns.length}>{this.props.emptyMessage}</td></tr>;
+            bodyContent = <div className="row"><div className="col" colSpan={visibleColumns.length}>{this.props.emptyMessage}</div></div>;
         }
 
         return (
@@ -97,16 +93,16 @@ export default class DataGrid extends React.Component {
                 <div className="settings">
                     <ColumnSelectorPopup columns={this.props.columns} onToggleColumn={this.toggleColumnClicked} />
                 </div>
-                <table ref={comp => this.table = comp}>
-                    <thead>
-                        <tr>
+                <div className="table">
+                    <div className="header">
+                        <div className="row">
                             {visibleColumns.map(item => <DataGridHeaderCell key={item.id} owner={this} column={item} />)}
-                        </tr>
-                    </thead>
-                    <tbody>
+                        </div>
+                    </div>
+                    <div className="body">
                         {bodyContent}
-                    </tbody>
-                </table>
+                    </div>
+                </div>
             </div>
         );
     }

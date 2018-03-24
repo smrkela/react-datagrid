@@ -14,10 +14,10 @@
   background-color: #FFF;
 }
 
-.App td .active{
+.App .col .active{
   color: green;
 }
 
-.App td .inactive{
+.App .col .inactive{
   color: red;
 }

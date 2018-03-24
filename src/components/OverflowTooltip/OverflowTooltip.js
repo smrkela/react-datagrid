@@ -1,8 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import ReactDOM from 'react-dom'
+import classNames from "classnames";
 
 import "./OverflowTooltip.css";
+
+function isTextOverflow(element) {
+    return element.clientWidth < element.scrollWidth
+}
 
 export default class OverflowTooltip extends React.Component {
     constructor(props) {
@@ -28,13 +33,8 @@ export default class OverflowTooltip extends React.Component {
     checkOverflow() {
 
         const element = ReactDOM.findDOMNode(this)
-        let overflow = false;
 
-        if (element.offsetWidth === element.scrollWidth && element.offsetWidth !== 0) {
-            element.style.width = (element.offsetWidth + 2) + 'px';
-        } else if (element.offsetWidth < element.scrollWidth && !this.state.overflow) {
-            overflow = true
-        }
+        const overflow = isTextOverflow(element)
 
         if (overflow !== this.state.overflow) {
             this.setState({ overflow: overflow })
@@ -42,9 +42,9 @@ export default class OverflowTooltip extends React.Component {
     }
 
     render() {
-        
-        let childProps = { className: "OverflowTooltip" };
-        
+
+        let childProps = { className: classNames("OverflowTooltip", this.props.children.props.className) };
+
         if (this.state.overflow) {
             childProps.title = this.props.title;
         }
@@ -52,7 +52,7 @@ export default class OverflowTooltip extends React.Component {
         return React.cloneElement(
             React.Children.only(this.props.children),
             childProps
-        )
+        )        
     }
 }
 

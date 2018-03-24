@@ -14,23 +14,20 @@ const DataGridCell = ({ data, column }) => {
 
         const cellValue = column.getCellValue(data);
 
+        const styles = column.getCellStyle(data);
+        const classNames = column.getCellClasses(data);
+
         content = (<OverflowTooltip title={cellValue + ""}>
-            <span>{cellValue}</span>
+            <div className={classNames} style={styles}>{cellValue}</div>
         </OverflowTooltip>);
-
-        const styles = column.styleFunction ? column.styleFunction(data) : null;
-        const classNames = column.classNameFunction ? column.classNameFunction(data) : null;
-
-        if (styles || classNames)
-            content = <span className={classNames} style={styles}>
-                {content}
-            </span>;
     }
 
+    const style = {width: column.getWidthString()};
+
     return (
-        <td>
+        <div className="col" style={style}>
             {content}
-        </td>
+        </div>
     );
 }
 
